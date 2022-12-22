@@ -16,7 +16,28 @@ app.get("/", (req, res) => {
 // MongoDB
 const uri = `mongodb+srv://${process.env.DATA_USER}:${process.env.DATA_PASSWORD}@cluster1.sxrfbem.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+async function run() {
+    const allUsers = client.db("userCollection").collection("users");
 
+    try {
+        app.get("/users", async (req, res) => {
+            const query = {};
+            const users = allUsers.find(query);
+            res.send(users);
+        });
+
+        app.post("/add-user", async (req, res) => {
+            const userInfo = req.body;
+            const result = await allUsers.insertOne(userInfo);
+            res.send(result);
+            console.log(result);
+        })
+    }
+    finally {
+
+    }
+}
+run().catch(err => console.error(err));
 
 
 app.listen(port, (req, res) => {
