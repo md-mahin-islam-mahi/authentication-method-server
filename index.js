@@ -20,9 +20,10 @@ async function run() {
     const allUsers = client.db("userCollection").collection("users");
 
     try {
-        app.get("/users", async (req, res) => {
-            const query = {};
-            const users = allUsers.find(query);
+        app.get("/user/:email", async (req, res) => {
+            const email = req.params.email;
+            const query = {email: email};
+            const users = await allUsers.findOne(query);
             res.send(users);
         });
 
@@ -30,7 +31,6 @@ async function run() {
             const userInfo = req.body;
             const result = await allUsers.insertOne(userInfo);
             res.send(result);
-            console.log(result);
         })
     }
     finally {
